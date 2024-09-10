@@ -6,6 +6,8 @@
 #include <cstring>
 #include <vector>
 
+class XChannel;
+
 #define MAX_EVENTS 1024
 
 class XEpoll
@@ -18,7 +20,9 @@ public:
     ~XEpoll();
 
     int AddFd(int _fd, uint32_t _events);
-    std::vector<epoll_event> TriggeredEvents(int _timeout = -1);
+    std::vector<XChannel *> TriggeredEvents(int _timeout = -1);
+
+    int UpdateChannel(XChannel *_channel);
 };
 
 #endif // XEpoll_hpp

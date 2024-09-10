@@ -7,6 +7,7 @@
 #include "XSocket.hpp"
 #include "XInternetAddress.hpp"
 #include "XEpoll.hpp"
+#include "XChannel.hpp"
 #include "XUtility.hpp"
 
 #define MAX_EVENTS 1024
@@ -21,14 +22,14 @@ int main(int argc, char const *argv[])
     ErrorIf(socket_server.Bind(internet_address) == -1, "socket bind error");
     ErrorIf(socket_server.Listen() == -1, "socket listen error");
     auto epoll = XEpoll();
-    ErrorIf(epoll.AddFd(socket_server.GetFd(), EPOLLIN | EPOLLET) == -1, "epoll add event error");
+    auto channel = XChannel(&epoll, &socket_server);
+    ErrorIf(channel.EnableReading() == -1, "epoll set event error");
     while (true)
     {
         auto trigger_events = epoll.TriggeredEvents();
-
         for (auto i_event : trigger_events)
         {
-            if (i_event.data.fd == socket_server.GetFd())
+            if (i_event->GetXSocket()->GetFd() == socket_server.GetFd())
             {
                 auto client_address = XInternetAddress();
                 auto client_socket = socket_server.Accept(client_address);
@@ -37,15 +38,16 @@ int main(int argc, char const *argv[])
                     std::cout << std::format("new connect IP: {}, port: {}", inet_ntoa(client_address.GetAddress().sin_addr), ntohs(client_address.GetAddress().sin_port)) << std::endl;
                 }
                 client_socket.SetNonBlocking();
-                ErrorIf(epoll.AddFd(client_socket.GetFd(), EPOLLIN | EPOLLET) == -1, "epoll add event error");
+                auto client_channel = XChannel(&epoll, &client_socket);
+                ErrorIf(client_channel.EnableReading() == -1, "epoll set event error");
             }
-            else if (i_event.events & EPOLLIN)
+            else if (i_event->GetRevents() & EPOLLIN)
             {
-                HandleReadEvent(i_event.data.fd);
+                HandleReadEvent(i_event->GetXSocket()->GetFd());
             }
             else
             {
-                std::cout << std::format("event {} happened", (uint32_t)i_event.events) << std::endl;
+                std::cout << std::format("event {} happened", i_event->GetRevents()) << std::endl;
             }
         }
     }

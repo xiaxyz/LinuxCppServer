@@ -1,5 +1,4 @@
 #include "XSocket.hpp"
-#include "XInternetAddress.hpp"
 
 std::unordered_set<int> XSocket::flag = std::unordered_set<int>();
 int XSocket::count = 0;

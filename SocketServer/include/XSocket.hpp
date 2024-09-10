@@ -7,6 +7,8 @@
 #include <utility>
 #include <unordered_set>
 
+#include "XInternetAddress.hpp"
+
 class XInternetAddress;
 
 class XSocket
