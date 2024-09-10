@@ -52,7 +52,8 @@
         "streambuf": "cpp",
         "typeinfo": "cpp",
         "variant": "cpp",
-        "text_encoding": "cpp"
+        "text_encoding": "cpp",
+        "unordered_set": "cpp"
     },
     "cmake.ignoreCMakeListsMissing": true
 }

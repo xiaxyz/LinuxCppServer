@@ -12,6 +12,7 @@
 #define MAX_EVENTS 1024
 #define MAX_BUFFER 1024
 
+void HandleReadEvent(int _fd);
 
 int main(int argc, char const *argv[])
 {
@@ -40,33 +41,7 @@ int main(int argc, char const *argv[])
             }
             else if (i_event.events & EPOLLIN)
             {
-                char buffer[MAX_BUFFER];
-                while (true)
-                {
-                    memset(buffer, 0, sizeof(buffer));
-                    ssize_t byte_read = read(i_event.data.fd, buffer, sizeof(buffer));
-                    if (byte_read > 0)
-                    {
-                        std::cout << std::format("message from client fd {}: {}", (int)i_event.data.fd, buffer) << std::endl;
-                        write(i_event.data.fd, buffer, sizeof(buffer));
-                    }
-                    else if (byte_read == -1 && errno == EINTR)
-                    {
-                        std::cout << std::format("continue reading") << std::endl;
-                        continue;
-                    }
-                    else if (byte_read == -1 && ((errno == EAGAIN) || (errno == EWOULDBLOCK)))
-                    {
-                        std::cout << std::format("finish reading once, errno: {}", errno) << std::endl;
-                        break;
-                    }
-                    else if (byte_read == 0)
-                    {
-                        std::cout << std::format("EOF, client fd {} disconnected", (int)i_event.data.fd) << std::endl;
-                        close(i_event.data.fd);
-                        break;
-                    }
-                }
+                HandleReadEvent(i_event.data.fd);
             }
             else
             {
@@ -76,4 +51,35 @@ int main(int argc, char const *argv[])
     }
 
     return 0;
+}
+
+void HandleReadEvent(int _fd)
+{
+    char buffer[MAX_BUFFER];
+    while (true)
+    {
+        memset(buffer, 0, sizeof(buffer));
+        ssize_t byte_read = read(_fd, buffer, sizeof(buffer));
+        if (byte_read > 0)
+        {
+            std::cout << std::format("message from client fd {}: {}", _fd, buffer) << std::endl;
+            write(_fd, buffer, sizeof(buffer));
+        }
+        else if (byte_read == -1 && errno == EINTR)
+        {
+            std::cout << std::format("continue reading") << std::endl;
+            continue;
+        }
+        else if (byte_read == -1 && ((errno == EAGAIN) || (errno == EWOULDBLOCK)))
+        {
+            std::cout << std::format("finish reading once, errno: {}", errno) << std::endl;
+            break;
+        }
+        else if (byte_read == 0)
+        {
+            std::cout << std::format("EOF, client fd {} disconnected", _fd) << std::endl;
+            close(_fd);
+            break;
+        }
+    }
 }

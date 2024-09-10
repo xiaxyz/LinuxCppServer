@@ -45,6 +45,7 @@ int XSocket::Listen(int _length)
     return listen(fd, _length);
 }
 
+
 void XSocket::SetNonBlocking()
 {
     fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK);
