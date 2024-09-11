@@ -7,15 +7,15 @@
 class XInternetAddress
 {
 private:
-    sockaddr_in address;
-    socklen_t length;
+    sockaddr_in socket_address;
+    socklen_t socket_length;
 public:
     XInternetAddress();
     XInternetAddress(const char *_ip, uint16_t _port);
     ~XInternetAddress();
 
-    sockaddr_in &GetAddress();
-    socklen_t &GetSize();
+    sockaddr_in &SocketAddress();
+    socklen_t &SocketLength();
 };
 
 #endif // XInternetAddress_hpp

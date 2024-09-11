@@ -21,39 +21,39 @@ XEpoll::~XEpoll()
 
 int XEpoll::AddFd(int _fd, uint32_t _events)
 {
-    auto event = epoll_event();
-    memset(&event, 0, sizeof(event));
-    event.data.fd = _fd;
-    event.events = _events;
-    return epoll_ctl(epoll_fd, EPOLL_CTL_ADD, _fd, &event);
+    auto event_ = epoll_event();
+    memset(&event_, 0, sizeof(event_));
+    event_.data.fd = _fd;
+    event_.events = _events;
+    return epoll_ctl(epoll_fd, EPOLL_CTL_ADD, _fd, &event_);
 }
 
 std::vector<XChannel *> XEpoll::TriggeredEvents(int _timeout)
 {
-    auto triggered_events = std::vector<XChannel *>();
-    auto num_fd = epoll_wait(epoll_fd, events, MAX_EVENTS, _timeout);
-    for (auto i = 0; i < num_fd; ++i)
+    auto triggered_events_ = std::vector<XChannel *>();
+    auto num_fd_ = epoll_wait(epoll_fd, events, MAX_EVENTS, _timeout);
+    for (auto i = 0; i < num_fd_; ++i)
     {
         auto channel = (XChannel *)events[i].data.ptr;
         channel->SetRevents(events[i].events);
-        triggered_events.push_back(channel);
+        triggered_events_.push_back(channel);
     }
-    return std::move(triggered_events);
+    return std::move(triggered_events_);
 }
 
 int XEpoll::UpdateChannel(XChannel *_channel)
 {
-    auto event = epoll_event();
-    memset(&event, 0, sizeof(event));
-    event.data.ptr = _channel;
-    event.events = _channel->GetEvents();
+    auto event_ = epoll_event();
+    memset(&event_, 0, sizeof(event_));
+    event_.data.ptr = _channel;
+    event_.events = _channel->GetEvents();
     if (_channel->GetInEpoll())
     {
-        return epoll_ctl(epoll_fd, EPOLL_CTL_MOD, _channel->GetXSocket()->GetFd(), &event);
+        return epoll_ctl(epoll_fd, EPOLL_CTL_MOD, _channel->GetXSocket()->GetFd(), &event_);
     }
     else
     {
         _channel->SetInEpoll(true);
-        return epoll_ctl(epoll_fd, EPOLL_CTL_ADD, _channel->GetXSocket()->GetFd(), &event);
+        return epoll_ctl(epoll_fd, EPOLL_CTL_ADD, _channel->GetXSocket()->GetFd(), &event_);
     }
 }

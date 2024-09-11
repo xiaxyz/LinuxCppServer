@@ -5,7 +5,7 @@
 #include <iostream>
 #include <format>
 
-bool ErrorIf(bool _condition, const char *_error_message);
+bool ErrorIfFile(bool _condition, const char *_error_message);
 
 int main(int argc, char const *argv[])
 {
@@ -17,7 +17,7 @@ int main(int argc, char const *argv[])
     serve_address.sin_addr.s_addr = inet_addr("127.0.0.1");
     serve_address.sin_port = htons(6666);
 
-    if (!ErrorIf(connect(socket_fd, (sockaddr *)&serve_address, sizeof(serve_address)) == -1, "socket connect error"))
+    if (!ErrorIfFile(connect(socket_fd, (sockaddr *)&serve_address, sizeof(serve_address)) == -1, "socket connect error"))
     {
         std::cout << std::format("success connect IP: {}, port: {}", inet_ntoa(serve_address.sin_addr), ntohs(serve_address.sin_port)) << std::endl;
     }
@@ -47,14 +47,14 @@ int main(int argc, char const *argv[])
         else if (read_bytes == -1) // read返回-1，表示发生错误，按照上文方法进行错误处理
         {
             close(socket_fd);
-            ErrorIf(true, "socket read error");
+            ErrorIfFile(true, "socket read error");
         }
     }
 
     return 0;
 }
 
-bool ErrorIf(bool _condition, const char *_error_message)
+bool ErrorIfFile(bool _condition, const char *_error_message)
 {
     if (_condition)
     {

@@ -1,29 +1,29 @@
 #include "XInternetAddress.hpp"
 
-XInternetAddress::XInternetAddress() : address(), length(sizeof(address))
+XInternetAddress::XInternetAddress() : socket_address(), socket_length(sizeof(socket_address))
 {
-    memset(&address, 0, sizeof(address));
+    memset(&socket_address, 0, sizeof(socket_address));
 }
 
-XInternetAddress::XInternetAddress(const char *_ip, uint16_t _port) : address(), length(sizeof(address))
+XInternetAddress::XInternetAddress(const char *_ip, uint16_t _port) : socket_address(), socket_length(sizeof(socket_address))
 {
-    memset(&address, 0, sizeof(address));
-    address.sin_family = AF_INET;
-    address.sin_addr.s_addr = inet_addr(_ip);
-    address.sin_port = htons(_port);
+    memset(&socket_address, 0, sizeof(socket_address));
+    socket_address.sin_family = AF_INET;
+    socket_address.sin_addr.s_addr = inet_addr(_ip);
+    socket_address.sin_port = htons(_port);
 }
 
 XInternetAddress::~XInternetAddress()
 {
 }
 
-sockaddr_in &XInternetAddress::GetAddress()
+sockaddr_in &XInternetAddress::SocketAddress()
 {
-    return address;
+    return socket_address;
 }
 
-socklen_t &XInternetAddress::GetSize()
+socklen_t &XInternetAddress::SocketLength()
 {
-    length = sizeof(address);
-    return length;
+    socket_length = sizeof(socket_address);
+    return socket_length;
 }

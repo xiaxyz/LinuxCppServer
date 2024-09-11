@@ -1,7 +1,7 @@
 #include "XChannel.hpp"
-#include "XEpoll.hpp"
+#include "XEventLoop.hpp"
 
-XChannel::XChannel(XEpoll *_epoll, XSocket *_socket) : epoll(_epoll), socket(_socket), in_epoll(false)
+XChannel::XChannel(XEventLoop *_event_loop, XSocket *_socket) : event_loop(_event_loop), socket(_socket), in_epoll(false)
 {
 }
 
@@ -12,7 +12,7 @@ XChannel::~XChannel()
 int XChannel::EnableReading()
 {
     events = EPOLLIN | EPOLLET;
-    return epoll->UpdateChannel(this);
+    return event_loop->UpdateChannel(this);
 }
 
 XSocket *XChannel::GetXSocket()
@@ -43,4 +43,14 @@ bool XChannel::GetInEpoll()
 void XChannel::SetInEpoll(bool _in_epoll)
 {
     in_epoll = _in_epoll;
+}
+
+void XChannel::SetCallback(std::function<void()> _callback)
+{
+    callback = _callback;
+}
+
+void XChannel::HandleEvent()
+{
+    callback();
 }

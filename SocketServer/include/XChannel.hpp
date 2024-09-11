@@ -2,21 +2,25 @@
 #define XChannel_hpp
 
 #include <cstdint>
+#include <sys/epoll.h>
+#include <functional>
 
-class XEpoll;
+class XEventLoop;
 class XSocket;
 
 class XChannel
 {
 private:
-    XEpoll *epoll;
+    XEventLoop *event_loop;
     XSocket *socket;
     uint32_t events;
     uint32_t revents;
     bool in_epoll;
 
+    std::function<void()> callback;
+
 public:
-    XChannel(XEpoll *_epoll, XSocket *_socket);
+    XChannel(XEventLoop *_event_loop, XSocket *_socket);
     ~XChannel();
 
     int EnableReading();
@@ -27,6 +31,9 @@ public:
     void SetRevents(uint32_t _revents);
     bool GetInEpoll();
     void SetInEpoll(bool _in_epoll);
+    void SetCallback(std::function<void()> _callback);
+
+    void HandleEvent();
 };
 
 #endif // XChannel_hpp

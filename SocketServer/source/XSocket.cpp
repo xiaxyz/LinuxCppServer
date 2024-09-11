@@ -36,7 +36,7 @@ XSocket::~XSocket()
 
 int XSocket::Bind(XInternetAddress &_address)
 {
-    return bind(fd, (sockaddr *)&_address.GetAddress(), _address.GetSize());
+    return bind(fd, (sockaddr *)&_address.SocketAddress(), _address.SocketLength());
 }
 
 int XSocket::Listen(int _length)
@@ -52,7 +52,7 @@ void XSocket::SetNonBlocking()
 
 XSocket XSocket::Accept(XInternetAddress &_address)
 {
-    return XSocket(accept(fd, (sockaddr *)&_address.GetAddress(), &_address.GetSize()));
+    return XSocket(accept(fd, (sockaddr *)&_address.SocketAddress(), &_address.SocketLength()));
 }
 
 void XSocket::Close()
