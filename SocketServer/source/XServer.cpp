@@ -3,6 +3,7 @@
 #include "XSocket.hpp"
 #include "XEpoll.hpp"
 #include "XChannel.hpp"
+#include "XConnection.hpp"
 
 XServer::XServer(XEventLoop *_event_loop) : event_loop(_event_loop)
 {
@@ -20,50 +21,18 @@ XServer::~XServer()
     }
 }
 
-void XServer::NewConnection(XSocket *_server_socket)
+void XServer::NewConnection(XSocket *_socket)
 {
-    auto client_address_ = XInternetAddress();
-    auto client_socket_ = new XSocket(_server_socket->Accept(&client_address_));
-    socket.push_back(client_socket_);
-    if (client_socket_->GetFd() != -1)
-    {
-        std::cout << std::format("new connect IP: {}, port: {}", inet_ntoa(client_address_.SocketAddress().sin_addr), ntohs(client_address_.SocketAddress().sin_port)) << std::endl;
-    }
-    client_socket_->SetNonBlocking();
-    auto client_channel_ = new XChannel(event_loop, client_socket_);
-    channels.push_back(client_channel_);
-    auto callback_ = std::bind(&XServer::HandleReadEvent, this, client_socket_);
-    client_channel_->SetCallback(callback_);
-    client_channel_->EnableReading();
+    auto connection_ = new XConnection(event_loop, _socket);
+    auto callback_ = std::bind(&XServer::DeleteConnection, this, std::placeholders::_1);
+    connection_->SetDeleteConnectionCallback(callback_);
+    connections[_socket] = connection_;
 }
 
-void XServer::HandleReadEvent(XSocket *_socket)
+void XServer::DeleteConnection(XSocket *_socket)
 {
-    char buffer_[MAX_BUFFER];
-    while (true)
-    {
-        memset(buffer_, 0, sizeof(buffer_));
-        ssize_t byte_read = read(_socket->GetFd(), buffer_, sizeof(buffer_));
-        if (byte_read > 0)
-        {
-            std::cout << std::format("message from client fd {}: {}", _socket->GetFd(), buffer_) << std::endl;
-            write(_socket->GetFd(), buffer_, sizeof(buffer_));
-        }
-        else if (byte_read == -1 && errno == EINTR)
-        {
-            std::cout << std::format("continue reading") << std::endl;
-            continue;
-        }
-        else if (byte_read == -1 && ((errno == EAGAIN) || (errno == EWOULDBLOCK)))
-        {
-            std::cout << std::format("finish reading once, errno: {}", errno) << std::endl;
-            break;
-        }
-        else if (byte_read == 0)
-        {
-            std::cout << std::format("EOF, client fd {} disconnected", _socket->GetFd()) << std::endl;
-            close(_socket->GetFd());
-            break;
-        }
-    }
+    auto connection_ = connections[_socket];
+    connections.erase(_socket);
+    delete connection_;
+    delete _socket;
 }

@@ -35,6 +35,11 @@ XSocket::~XSocket()
     }
 }
 
+std::strong_ordering XSocket::operator<=>(const XSocket &_other) const
+{
+    return fd <=> _other.fd;
+}
+
 void XSocket::Bind(XInternetAddress *_address)
 {
     ErrorIfFile(bind(fd, (sockaddr *)&_address->SocketAddress(), _address->SocketLength()) == -1, "socket bind error");

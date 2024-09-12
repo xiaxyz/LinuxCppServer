@@ -2,6 +2,8 @@
 #define XAcceptor_hpp
 
 #include <functional>
+#include <format>
+#include <iostream>
 
 class XEventLoop;
 class XSocket;

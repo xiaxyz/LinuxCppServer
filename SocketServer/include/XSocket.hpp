@@ -6,6 +6,7 @@
 #include <fcntl.h>
 #include <utility>
 #include <unordered_set>
+#include <compare>
 
 #include "XInternetAddress.hpp"
 
@@ -22,6 +23,8 @@ public:
     XSocket(int _fd);
     XSocket(const XSocket &_other);
     ~XSocket();
+
+    std::strong_ordering operator<=>(const XSocket &_other) const;
 
     void Bind(XInternetAddress *_address);
     void Listen(int _length = SOMAXCONN);

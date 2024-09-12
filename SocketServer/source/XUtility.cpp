@@ -4,7 +4,7 @@ bool ErrorIf(bool _condition, const char *_error_message, const char * _file, in
 {
     if (_condition)
     {
-        std::cerr << _file << ":" << _line << ": " << _error_message << std::endl;
+        std::cerr << _file << ":" << _line << ": " << "errno: " << errno << ", " << "message: " << _error_message << std::endl;
         return true;
     }
     return false;

@@ -25,7 +25,14 @@ XAcceptor::~XAcceptor()
 
 void XAcceptor::AcceptConnection()
 {
-    new_connection_callback(socket);
+    auto client_address_ = XInternetAddress();
+    auto client_socket_ = new XSocket(socket->Accept(&client_address_));
+    if (client_socket_->GetFd() != -1)
+    {
+        std::cout << std::format("new connect IP: {}, port: {}", inet_ntoa(client_address_.SocketAddress().sin_addr), ntohs(client_address_.SocketAddress().sin_port)) << std::endl;
+    }
+    client_socket_->SetNonBlocking();
+    new_connection_callback(client_socket_);
 }
 
 void XAcceptor::SetNewConnectionCallback(std::function<void(XSocket *)> _new_connection_callback)
