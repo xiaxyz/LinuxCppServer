@@ -17,7 +17,7 @@ public:
     ~XEventLoop();
 
     void Loop();
-    int UpdateChannel(XChannel *_channel);
+    void UpdateChannel(XChannel *_channel);
 
 };
 

@@ -1,4 +1,5 @@
 #include "XEpoll.hpp"
+#include "XUtility.hpp"
 #include "XChannel.hpp"
 #include "XSocket.hpp"
 
@@ -41,7 +42,7 @@ std::vector<XChannel *> XEpoll::TriggeredEvents(int _timeout)
     return std::move(triggered_events_);
 }
 
-int XEpoll::UpdateChannel(XChannel *_channel)
+void XEpoll::UpdateChannel(XChannel *_channel)
 {
     auto event_ = epoll_event();
     memset(&event_, 0, sizeof(event_));
@@ -49,11 +50,11 @@ int XEpoll::UpdateChannel(XChannel *_channel)
     event_.events = _channel->GetEvents();
     if (_channel->GetInEpoll())
     {
-        return epoll_ctl(epoll_fd, EPOLL_CTL_MOD, _channel->GetXSocket()->GetFd(), &event_);
+        ErrorIfFile(epoll_ctl(epoll_fd, EPOLL_CTL_MOD, _channel->GetXSocket()->GetFd(), &event_) == -1, "epoll modify event error");
     }
     else
     {
+        ErrorIfFile(epoll_ctl(epoll_fd, EPOLL_CTL_ADD, _channel->GetXSocket()->GetFd(), &event_) == -1, "epoll add event error");
         _channel->SetInEpoll(true);
-        return epoll_ctl(epoll_fd, EPOLL_CTL_ADD, _channel->GetXSocket()->GetFd(), &event_);
     }
 }

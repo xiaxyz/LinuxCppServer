@@ -23,12 +23,12 @@ public:
     XSocket(const XSocket &_other);
     ~XSocket();
 
-    int Bind(XInternetAddress &_address);
-    int Listen(int _length = SOMAXCONN);
+    void Bind(XInternetAddress *_address);
+    void Listen(int _length = SOMAXCONN);
 
     void SetNonBlocking();
 
-    XSocket Accept(XInternetAddress &_address);
+    XSocket Accept(XInternetAddress *_address);
 
     void Close();
 

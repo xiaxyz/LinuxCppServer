@@ -23,7 +23,7 @@ public:
     XChannel(XEventLoop *_event_loop, XSocket *_socket);
     ~XChannel();
 
-    int EnableReading();
+    void EnableReading();
 
     XSocket *GetXSocket();
     uint32_t GetEvents();

@@ -11,6 +11,7 @@
 #define MAX_BUFFER 1024
 
 class XEventLoop;
+class XAcceptor;
 class XChannel;
 class XSocket;
 
@@ -18,6 +19,7 @@ class XServer
 {
 private:
     XEventLoop *event_loop;
+    XAcceptor *acceptor;
     std::vector<XSocket *> socket;
     std::vector<XChannel *> channels;
 public:

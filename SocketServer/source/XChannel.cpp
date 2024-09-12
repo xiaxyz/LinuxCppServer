@@ -9,10 +9,10 @@ XChannel::~XChannel()
 {
 }
 
-int XChannel::EnableReading()
+void XChannel::EnableReading()
 {
     events = EPOLLIN | EPOLLET;
-    return event_loop->UpdateChannel(this);
+    event_loop->UpdateChannel(this);
 }
 
 XSocket *XChannel::GetXSocket()

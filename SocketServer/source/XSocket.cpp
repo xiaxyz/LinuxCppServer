@@ -1,4 +1,5 @@
 #include "XSocket.hpp"
+#include "XUtility.hpp"
 
 std::unordered_set<int> XSocket::flag = std::unordered_set<int>();
 int XSocket::count = 0;
@@ -34,14 +35,14 @@ XSocket::~XSocket()
     }
 }
 
-int XSocket::Bind(XInternetAddress &_address)
+void XSocket::Bind(XInternetAddress *_address)
 {
-    return bind(fd, (sockaddr *)&_address.SocketAddress(), _address.SocketLength());
+    ErrorIfFile(bind(fd, (sockaddr *)&_address->SocketAddress(), _address->SocketLength()) == -1, "socket bind error");
 }
 
-int XSocket::Listen(int _length)
+void XSocket::Listen(int _length)
 {
-    return listen(fd, _length);
+    ErrorIfFile(listen(fd, _length), "socket listen error");
 }
 
 
@@ -50,9 +51,11 @@ void XSocket::SetNonBlocking()
     fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK);
 }
 
-XSocket XSocket::Accept(XInternetAddress &_address)
+XSocket XSocket::Accept(XInternetAddress *_address)
 {
-    return XSocket(accept(fd, (sockaddr *)&_address.SocketAddress(), &_address.SocketLength()));
+    auto client_ = XSocket(accept(fd, (sockaddr *)&_address->SocketAddress(), &_address->SocketLength()));
+    ErrorIfFile(client_.GetFd() == -1, "socket accept error");
+    return client_;
 }
 
 void XSocket::Close()

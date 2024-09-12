@@ -26,7 +26,7 @@ void XEventLoop::Loop()
 
 }
 
-int XEventLoop::UpdateChannel(XChannel *_channel)
+void XEventLoop::UpdateChannel(XChannel *_channel)
 {
-    return epoll->UpdateChannel(_channel);
+    epoll->UpdateChannel(_channel);
 }

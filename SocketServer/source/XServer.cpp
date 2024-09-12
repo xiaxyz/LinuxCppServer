@@ -1,26 +1,19 @@
 #include "XServer.hpp"
+#include "XAcceptor.hpp"
 #include "XSocket.hpp"
-#include "XUtility.hpp"
 #include "XEpoll.hpp"
 #include "XChannel.hpp"
 
 XServer::XServer(XEventLoop *_event_loop) : event_loop(_event_loop)
 {
-    auto server_socket_ = new XSocket();
-    socket.push_back(server_socket_);
-    auto internet_address_ = XInternetAddress("127.0.0.1", 6666);
-    ErrorIfFile(server_socket_->Bind(internet_address_) == -1, "socket bind error");
-    ErrorIfFile(server_socket_->Listen() == -1, "socket listen error");
-    server_socket_->SetNonBlocking();
-    auto server_channel = new XChannel(event_loop, server_socket_);
-    channels.push_back(server_channel);
-    auto callback = std::bind(&XServer::NewConnection, this, server_socket_);
-    server_channel->SetCallback(callback);
-    ErrorIfFile(server_channel->EnableReading() == -1, "epoll set event error");
+    acceptor = new XAcceptor(event_loop);
+    auto callback = std::bind(&XServer::NewConnection, this, std::placeholders::_1);
+    acceptor->SetNewConnectionCallback(callback);
 }
 
 XServer::~XServer()
 {
+    delete acceptor;
     for (auto i_channel : channels)
     {
         delete i_channel;
@@ -30,9 +23,9 @@ XServer::~XServer()
 void XServer::NewConnection(XSocket *_server_socket)
 {
     auto client_address_ = XInternetAddress();
-    auto client_socket_ = new XSocket(_server_socket->Accept(client_address_));
+    auto client_socket_ = new XSocket(_server_socket->Accept(&client_address_));
     socket.push_back(client_socket_);
-    if (!ErrorIfFile(client_socket_->GetFd() == -1, "socket accept error"))
+    if (client_socket_->GetFd() != -1)
     {
         std::cout << std::format("new connect IP: {}, port: {}", inet_ntoa(client_address_.SocketAddress().sin_addr), ntohs(client_address_.SocketAddress().sin_port)) << std::endl;
     }
@@ -41,7 +34,7 @@ void XServer::NewConnection(XSocket *_server_socket)
     channels.push_back(client_channel_);
     auto callback_ = std::bind(&XServer::HandleReadEvent, this, client_socket_);
     client_channel_->SetCallback(callback_);
-    ErrorIfFile(client_channel_->EnableReading() == -1, "epoll set event error");
+    client_channel_->EnableReading();
 }
 
 void XServer::HandleReadEvent(XSocket *_socket)

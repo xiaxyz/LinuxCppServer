@@ -22,7 +22,7 @@ public:
     int AddFd(int _fd, uint32_t _events);
     std::vector<XChannel *> TriggeredEvents(int _timeout = -1);
 
-    int UpdateChannel(XChannel *_channel);
+    void UpdateChannel(XChannel *_channel);
 };
 
 #endif // XEpoll_hpp
