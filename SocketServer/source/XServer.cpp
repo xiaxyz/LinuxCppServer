@@ -5,34 +5,26 @@
 #include "XChannel.hpp"
 #include "XConnection.hpp"
 
-XServer::XServer(XEventLoop *_event_loop) : event_loop(_event_loop)
+XServer::XServer(std::shared_ptr<XEventLoop>_event_loop) : event_loop(_event_loop)
 {
-    acceptor = new XAcceptor(event_loop);
+    acceptor = std::make_unique<XAcceptor>(event_loop);
     auto callback = std::bind(&XServer::NewConnection, this, std::placeholders::_1);
     acceptor->SetNewConnectionCallback(callback);
 }
 
 XServer::~XServer()
 {
-    delete acceptor;
-    for (auto i_channel : channels)
-    {
-        delete i_channel;
-    }
 }
 
-void XServer::NewConnection(XSocket *_socket)
+void XServer::NewConnection(std::shared_ptr<XSocket>_socket)
 {
-    auto connection_ = new XConnection(event_loop, _socket);
+    auto connection_ = std::make_unique<XConnection>(event_loop, _socket);
     auto callback_ = std::bind(&XServer::DeleteConnection, this, std::placeholders::_1);
     connection_->SetDeleteConnectionCallback(callback_);
-    connections[_socket] = connection_;
+    connections[_socket->GetFd()] = std::move(connection_);
 }
 
-void XServer::DeleteConnection(XSocket *_socket)
+void XServer::DeleteConnection(std::shared_ptr<XSocket>_socket)
 {
-    auto connection_ = connections[_socket];
-    connections.erase(_socket);
-    delete connection_;
-    delete _socket;
+    connections.erase(_socket->GetFd());
 }

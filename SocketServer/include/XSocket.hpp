@@ -4,9 +4,8 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <utility>
-#include <unordered_set>
 #include <compare>
+#include <memory>
 
 #include "XInternetAddress.hpp"
 
@@ -16,22 +15,17 @@ class XSocket
 {
 private:
     int fd;
-    static std::unordered_set<int> flag;
-    static int count;
 public:
     XSocket();
     XSocket(int _fd);
-    XSocket(const XSocket &_other);
     ~XSocket();
 
-    std::strong_ordering operator<=>(const XSocket &_other) const;
-
-    void Bind(XInternetAddress *_address);
+    void Bind(std::shared_ptr<XInternetAddress> _address);
     void Listen(int _length = SOMAXCONN);
 
     void SetNonBlocking();
 
-    XSocket Accept(XInternetAddress *_address);
+    std::shared_ptr<XSocket> Accept(std::shared_ptr<XInternetAddress> _address);
 
     void Close();
 

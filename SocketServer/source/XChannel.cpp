@@ -1,7 +1,7 @@
 #include "XChannel.hpp"
 #include "XEventLoop.hpp"
 
-XChannel::XChannel(XEventLoop *_event_loop, XSocket *_socket) : event_loop(_event_loop), socket(_socket), in_epoll(false)
+XChannel::XChannel(std::shared_ptr<XEventLoop> _event_loop, std::shared_ptr<XSocket> _socket) : event_loop(_event_loop), socket(_socket), in_epoll(false)
 {
 }
 
@@ -12,10 +12,10 @@ XChannel::~XChannel()
 void XChannel::EnableReading()
 {
     events = EPOLLIN | EPOLLET;
-    event_loop->UpdateChannel(this);
+    event_loop->UpdateChannel(shared_from_this());
 }
 
-XSocket *XChannel::GetXSocket()
+std::shared_ptr<XSocket> XChannel::GetXSocket()
 {
     return socket;
 }

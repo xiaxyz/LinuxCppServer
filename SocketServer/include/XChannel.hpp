@@ -4,15 +4,16 @@
 #include <cstdint>
 #include <sys/epoll.h>
 #include <functional>
+#include <memory>
 
 class XEventLoop;
 class XSocket;
 
-class XChannel
+class XChannel : public std::enable_shared_from_this<XChannel>
 {
 private:
-    XEventLoop *event_loop;
-    XSocket *socket;
+    std::shared_ptr<XEventLoop> event_loop;
+    std::shared_ptr<XSocket> socket;
     uint32_t events;
     uint32_t revents;
     bool in_epoll;
@@ -20,12 +21,12 @@ private:
     std::function<void()> callback;
 
 public:
-    XChannel(XEventLoop *_event_loop, XSocket *_socket);
+    XChannel(std::shared_ptr<XEventLoop> _event_loop, std::shared_ptr<XSocket> _socket);
     ~XChannel();
 
     void EnableReading();
 
-    XSocket *GetXSocket();
+    std::shared_ptr<XSocket> GetXSocket();
     uint32_t GetEvents();
     uint32_t GetRevents();
     void SetRevents(uint32_t _revents);

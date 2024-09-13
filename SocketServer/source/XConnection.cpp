@@ -2,9 +2,9 @@
 #include "XChannel.hpp"
 #include "XSocket.hpp"
 
-XConnection::XConnection(XEventLoop *_event_loop, XSocket *_socket) : event_loop(_event_loop), socket(_socket)
+XConnection::XConnection(std::shared_ptr<XEventLoop> _event_loop, std::shared_ptr<XSocket> _socket) : event_loop(_event_loop), socket(_socket)
 {
-    channel = new XChannel(event_loop, socket);
+    channel = std::make_shared<XChannel>(event_loop, socket);
     auto callback = std::bind(&XConnection::Echo, this);
     channel->SetCallback(callback);
     channel->EnableReading();
@@ -12,8 +12,6 @@ XConnection::XConnection(XEventLoop *_event_loop, XSocket *_socket) : event_loop
 
 XConnection::~XConnection()
 {
-    socket->Close();
-    delete channel;
 }
 
 void XConnection::Echo()
@@ -47,7 +45,7 @@ void XConnection::Echo()
     }
 }
 
-void XConnection::SetDeleteConnectionCallback(std::function<void(XSocket *)> _delete_connection_callback)
+void XConnection::SetDeleteConnectionCallback(std::function<void(std::shared_ptr<XSocket>)> _delete_connection_callback)
 {
     delete_connection_callback = _delete_connection_callback;
 }

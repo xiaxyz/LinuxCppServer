@@ -54,7 +54,15 @@
         "variant": "cpp",
         "text_encoding": "cpp",
         "unordered_set": "cpp",
-        "map": "cpp"
+        "map": "cpp",
+        "chrono": "cpp",
+        "condition_variable": "cpp",
+        "ratio": "cpp",
+        "iomanip": "cpp",
+        "semaphore": "cpp",
+        "shared_mutex": "cpp",
+        "sstream": "cpp",
+        "stop_token": "cpp"
     },
     "cmake.ignoreCMakeListsMissing": true,
     "C_Cpp.default.compilerPath": "/usr/local/bin/gcc"

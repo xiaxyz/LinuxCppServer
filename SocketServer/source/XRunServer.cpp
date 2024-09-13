@@ -3,8 +3,8 @@
 
 int main(int argc, char const *argv[])
 {
-    XEventLoop loop;
-    XServer server(&loop);
-    loop.Loop();
+    std::shared_ptr<XEventLoop> loop = std::make_shared<XEventLoop>();
+    XServer server(loop);
+    loop->Loop();
     return 0;
 }

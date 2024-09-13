@@ -1,48 +1,27 @@
 #include "XSocket.hpp"
 #include "XUtility.hpp"
 
-std::unordered_set<int> XSocket::flag = std::unordered_set<int>();
-int XSocket::count = 0;
-
 XSocket::XSocket() : fd(-1)
 {
     fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    flag.insert(fd);
-    ++count;
 }
 
 XSocket::XSocket(int _fd) : fd(_fd)
 {
-    flag.insert(fd);
-    ++count;
-}
-
-XSocket::XSocket(const XSocket &_other) : fd(_other.fd)
-{
-    ++count;
 }
 
 XSocket::~XSocket()
 {
-    --count;
-    flag.erase(fd);
-    if (count <= 0)
+    if (fd != -1)
     {
-        for (auto i_flag : flag)
-        {
-            close(i_flag);
-        }
+        close(fd);
     }
 }
 
-std::strong_ordering XSocket::operator<=>(const XSocket &_other) const
-{
-    return fd <=> _other.fd;
-}
 
-void XSocket::Bind(XInternetAddress *_address)
+void XSocket::Bind(std::shared_ptr<XInternetAddress> _address)
 {
-    ErrorIfFile(bind(fd, (sockaddr *)&_address->SocketAddress(), _address->SocketLength()) == -1, "socket bind error");
+    ErrorIfFile(bind(fd, (sockaddr *)_address->GetSocketAddress().get(), *_address->GetSocketLength()) == -1, "socket bind error");
 }
 
 void XSocket::Listen(int _length)
@@ -50,23 +29,21 @@ void XSocket::Listen(int _length)
     ErrorIfFile(listen(fd, _length), "socket listen error");
 }
 
-
 void XSocket::SetNonBlocking()
 {
     fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK);
 }
 
-XSocket XSocket::Accept(XInternetAddress *_address)
+std::shared_ptr<XSocket> XSocket::Accept(std::shared_ptr<XInternetAddress> _address)
 {
-    auto client_ = XSocket(accept(fd, (sockaddr *)&_address->SocketAddress(), &_address->SocketLength()));
-    ErrorIfFile(client_.GetFd() == -1, "socket accept error");
-    return client_;
+    auto client_ = accept(fd, (sockaddr *)_address->GetSocketAddress().get(), _address->GetSocketLength().get());
+    ErrorIfFile(client_ == -1, "socket accept error");
+    return std::make_shared<XSocket>(client_);
 }
 
 void XSocket::Close()
 {
     close(fd);
-    flag.erase(fd);
 }
 
 int XSocket::GetFd()
@@ -77,5 +54,4 @@ int XSocket::GetFd()
 void XSocket::SetFd(int _fd)
 {
     fd = _fd;
-    flag.insert(fd);
 }

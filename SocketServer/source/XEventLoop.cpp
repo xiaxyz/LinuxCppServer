@@ -2,23 +2,21 @@
 #include "XChannel.hpp"
 #include "XEpoll.hpp"
 
-XEventLoop::XEventLoop() : epoll(nullptr), quit(false)
+XEventLoop::XEventLoop() : quit(false)
 {
-    epoll = new XEpoll();
+    epoll = std::make_unique<XEpoll>();
 }
 
 XEventLoop::~XEventLoop()
 {
-    delete epoll;
 }
 
 void XEventLoop::Loop()
 {
     while (!quit)
     {
-        std::vector<XChannel *> channels;
         channels = epoll->TriggeredEvents();
-        for (auto i_channel : channels)
+        for (const auto &i_channel : channels)
         {
             i_channel->HandleEvent();
         }
@@ -26,7 +24,7 @@ void XEventLoop::Loop()
 
 }
 
-void XEventLoop::UpdateChannel(XChannel *_channel)
+void XEventLoop::UpdateChannel(std::shared_ptr<XChannel> _channel)
 {
     epoll->UpdateChannel(_channel);
 }

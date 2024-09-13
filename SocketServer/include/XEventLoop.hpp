@@ -2,6 +2,7 @@
 #define XEventLoop_hpp
 
 #include <vector>
+#include <memory>
 
 class XEpoll;
 class XChannel;
@@ -9,7 +10,8 @@ class XChannel;
 class XEventLoop
 {
 private:
-    XEpoll *epoll;
+    std::unique_ptr<XEpoll> epoll;
+    std::vector<std::shared_ptr<XChannel>> channels;
     bool quit;
 
 public:
@@ -17,7 +19,7 @@ public:
     ~XEventLoop();
 
     void Loop();
-    void UpdateChannel(XChannel *_channel);
+    void UpdateChannel(std::shared_ptr<XChannel> _channel);
 
 };
 

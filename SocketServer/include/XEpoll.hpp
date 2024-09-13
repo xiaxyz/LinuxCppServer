@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <cstring>
 #include <vector>
+#include <memory>
+#include <unordered_map>
 
 class XChannel;
 
@@ -14,15 +16,16 @@ class XEpoll
 {
 private:
     int epoll_fd;
-    epoll_event *events;
+    std::shared_ptr<epoll_event[]> events;
+    std::unordered_map<XChannel *, std::shared_ptr<XChannel>> ptr_channel;
 public:
     XEpoll();
     ~XEpoll();
 
     int AddFd(int _fd, uint32_t _events);
-    std::vector<XChannel *> TriggeredEvents(int _timeout = -1);
+    std::vector<std::shared_ptr<XChannel>> TriggeredEvents(int _timeout = -1);
 
-    void UpdateChannel(XChannel *_channel);
+    void UpdateChannel(std::shared_ptr<XChannel> _channel);
 };
 
 #endif // XEpoll_hpp

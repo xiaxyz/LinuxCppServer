@@ -7,30 +7,25 @@
 #include <format>
 #include <vector>
 #include <map>
-
-// #define MAX_EVENTS 1024
-// #define MAX_BUFFER 1024
+#include <memory>
 
 class XEventLoop;
 class XAcceptor;
-class XChannel;
 class XSocket;
 class XConnection;
 
 class XServer
 {
 private:
-    XEventLoop *event_loop;
-    XAcceptor *acceptor;
-    std::map<XSocket *, XConnection *> connections;
-    std::vector<XSocket *> socket;
-    std::vector<XChannel *> channels;
+    std::shared_ptr<XEventLoop> event_loop;
+    std::unique_ptr<XAcceptor> acceptor;
+    std::map<int, std::unique_ptr<XConnection>> connections;
 public:
-    XServer(XEventLoop *_event_loop);
+    XServer(std::shared_ptr<XEventLoop> _event_loop);
     ~XServer();
 
-    void NewConnection(XSocket *_socket);
-    void DeleteConnection(XSocket *_socket);
+    void NewConnection(std::shared_ptr<XSocket> _socket);
+    void DeleteConnection(std::shared_ptr<XSocket> _socket);
     // void HandleReadEvent(XSocket *_socket);
 };
 

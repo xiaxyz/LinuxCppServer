@@ -4,6 +4,7 @@
 #include <functional>
 #include <format>
 #include <iostream>
+#include <memory>
 
 class XEventLoop;
 class XSocket;
@@ -13,18 +14,18 @@ class XChannel;
 class XAcceptor
 {
 private:
-    XEventLoop *event_loop;
-    XSocket *socket;
-    XInternetAddress *internet_address;
-    XChannel *accept_channel;
-    std::function<void(XSocket *)> new_connection_callback;
+    std::shared_ptr<XEventLoop> event_loop;
+    std::shared_ptr<XInternetAddress> internet_address;
+    std::shared_ptr<XSocket> socket;
+    std::shared_ptr<XChannel> accept_channel;
+    std::function<void(std::shared_ptr<XSocket>)> new_connection_callback;
 
 public:
-    XAcceptor(XEventLoop *_event_loop);
+    XAcceptor(std::shared_ptr<XEventLoop> _event_loop);
     ~XAcceptor();
 
     void AcceptConnection();
-    void SetNewConnectionCallback(std::function<void(XSocket *)> _new_connection_callback);
+    void SetNewConnectionCallback(std::function<void(std::shared_ptr<XSocket>)> _new_connection_callback);
 };
 
 #endif // XAcceptor_hpp
