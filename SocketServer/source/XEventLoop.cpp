@@ -15,7 +15,7 @@ void XEventLoop::Loop()
 {
     while (!quit)
     {
-        channels = epoll->TriggeredEvents();
+        auto channels = epoll->TriggeredEvents();
         for (const auto &i_channel : channels)
         {
             i_channel->HandleEvent();

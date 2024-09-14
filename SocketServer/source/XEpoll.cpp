@@ -30,13 +30,13 @@ int XEpoll::AddFd(int _fd, uint32_t _events)
 
 std::vector<std::shared_ptr<XChannel>> XEpoll::TriggeredEvents(int _timeout)
 {
-    auto triggered_events_ = std::vector<std::shared_ptr<XChannel>>();
     auto num_fd_ = epoll_wait(epoll_fd, events.get(), MAX_EVENTS, _timeout);
+    auto triggered_events_ = std::vector<std::shared_ptr<XChannel>>(num_fd_);
     for (auto i = 0; i < num_fd_; ++i)
     {
-        auto channel = std::shared_ptr<XChannel>(ptr_channel.find(static_cast<XChannel *>(events[i].data.ptr))->second);
+        auto channel = ptr_channel.find(static_cast<XChannel *>(events[i].data.ptr))->second;
         channel->SetRevents(events[i].events);
-        triggered_events_.push_back(channel);
+        triggered_events_[i] = channel;
     }
     return triggered_events_;
 }
@@ -46,7 +46,7 @@ void XEpoll::UpdateChannel(std::shared_ptr<XChannel> _channel)
     auto event_ = epoll_event();
     memset(&event_, 0, sizeof(event_));
     ptr_channel[_channel.get()] = _channel;
-    event_.data.ptr = _channel.get();
+    event_.data.ptr = static_cast<void *>(_channel.get());
     event_.events = _channel->GetEvents();
     if (_channel->GetInEpoll())
     {

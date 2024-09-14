@@ -11,7 +11,6 @@ class XEventLoop
 {
 private:
     std::unique_ptr<XEpoll> epoll;
-    std::vector<std::shared_ptr<XChannel>> channels;
     bool quit;
 
 public:
