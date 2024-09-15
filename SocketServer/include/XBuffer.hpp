@@ -7,6 +7,7 @@ class XBuffer
 {
 private:
     std::string data;
+
 public:
     XBuffer();
     ~XBuffer();

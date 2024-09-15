@@ -1,7 +1,7 @@
 #include "XEpoll.hpp"
-#include "XUtility.hpp"
 #include "XChannel.hpp"
 #include "XSocket.hpp"
+#include "XUtility.hpp"
 
 XEpoll::XEpoll() : epoll_fd(-1), events(nullptr)
 {

@@ -1,8 +1,8 @@
 #ifndef XAcceptor_hpp
 #define XAcceptor_hpp
 
-#include <functional>
 #include <format>
+#include <functional>
 #include <iostream>
 #include <memory>
 

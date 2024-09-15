@@ -62,7 +62,10 @@
         "semaphore": "cpp",
         "shared_mutex": "cpp",
         "sstream": "cpp",
-        "stop_token": "cpp"
+        "stop_token": "cpp",
+        "thread": "cpp",
+        "queue": "cpp",
+        "mutex": "cpp"
     },
     "cmake.ignoreCMakeListsMissing": true,
     "C_Cpp.default.compilerPath": "/usr/local/bin/gcc"

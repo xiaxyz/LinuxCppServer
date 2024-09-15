@@ -1,11 +1,11 @@
 #ifndef XSocket_hpp
 #define XSocket_hpp
 
+#include <compare>
+#include <fcntl.h>
+#include <memory>
 #include <sys/socket.h>
 #include <unistd.h>
-#include <fcntl.h>
-#include <compare>
-#include <memory>
 
 #include "XInternetAddress.hpp"
 
@@ -15,6 +15,7 @@ class XSocket
 {
 private:
     int fd;
+
 public:
     XSocket();
     XSocket(int _fd);

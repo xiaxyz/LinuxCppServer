@@ -10,6 +10,7 @@ class XInternetAddress
 private:
     std::shared_ptr<sockaddr_in> socket_address;
     std::shared_ptr<socklen_t> socket_length;
+
 public:
     XInternetAddress();
     XInternetAddress(const char *_ip, uint16_t _port);

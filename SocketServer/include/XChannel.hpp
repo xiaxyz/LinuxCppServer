@@ -2,9 +2,9 @@
 #define XChannel_hpp
 
 #include <cstdint>
-#include <sys/epoll.h>
 #include <functional>
 #include <memory>
+#include <sys/epoll.h>
 
 class XEventLoop;
 class XSocket;

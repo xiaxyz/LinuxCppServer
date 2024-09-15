@@ -1,7 +1,7 @@
 #include "XConnection.hpp"
+#include "XBuffer.hpp"
 #include "XChannel.hpp"
 #include "XSocket.hpp"
-#include "XBuffer.hpp"
 #include "XUtility.hpp"
 
 XConnection::XConnection(std::shared_ptr<XEventLoop> _event_loop, std::shared_ptr<XSocket> _socket) : event_loop(_event_loop), socket(_socket)

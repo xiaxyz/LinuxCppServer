@@ -1,12 +1,12 @@
 #ifndef XEpoll_hpp
 #define XEpoll_hpp
 
+#include <cstring>
+#include <memory>
 #include <sys/epoll.h>
 #include <unistd.h>
-#include <cstring>
-#include <vector>
-#include <memory>
 #include <unordered_map>
+#include <vector>
 
 class XChannel;
 
@@ -18,6 +18,7 @@ private:
     int epoll_fd;
     std::shared_ptr<epoll_event[]> events;
     std::unordered_map<XChannel *, std::shared_ptr<XChannel>> ptr_channel;
+
 public:
     XEpoll();
     ~XEpoll();

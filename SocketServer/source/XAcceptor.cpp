@@ -1,7 +1,7 @@
 #include "XAcceptor.hpp"
-#include "XSocket.hpp"
-#include "XInternetAddress.hpp"
 #include "XChannel.hpp"
+#include "XInternetAddress.hpp"
+#include "XSocket.hpp"
 
 XAcceptor::XAcceptor(std::shared_ptr<XEventLoop> _event_loop) : event_loop(_event_loop)
 {

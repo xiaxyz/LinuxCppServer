@@ -52,5 +52,5 @@ void XChannel::SetCallback(std::function<void()> _callback)
 
 void XChannel::HandleEvent()
 {
-    callback();
+    event_loop->AddThread(callback);
 }

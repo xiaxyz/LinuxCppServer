@@ -1,13 +1,13 @@
 #ifndef XConnection_hpp
 #define XConnection_hpp
 
-#include <functional>
-#include <format>
-#include <iostream>
 #include <cstring>
+#include <format>
+#include <functional>
+#include <iostream>
+#include <memory>
 #include <string>
 #include <unistd.h>
-#include <memory>
 
 #define READ_BUFFER 1024
 
@@ -24,6 +24,7 @@ private:
     std::shared_ptr<XChannel> channel;
     std::unique_ptr<XBuffer> read_buffer;
     std::function<void(std::shared_ptr<XSocket>)> delete_connection_callback;
+
 public:
     XConnection(std::shared_ptr<XEventLoop> _event_loop, std::shared_ptr<XSocket> _socket);
     ~XConnection();
