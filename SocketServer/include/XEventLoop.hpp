@@ -12,18 +12,18 @@ class XThreadPool;
 class XEventLoop
 {
 private:
-    std::unique_ptr<XEpoll> epoll;
-    std::unique_ptr<XThreadPool> thread_pool;
-    bool quit;
+	std::unique_ptr<XEpoll> epoll;
+	std::unique_ptr<XThreadPool> thread_pool;
+	bool quit;
 
 public:
-    XEventLoop();
-    ~XEventLoop();
+	XEventLoop();
+	~XEventLoop();
 
-    void Loop();
-    void UpdateChannel(std::shared_ptr<XChannel> _channel);
+	void Loop();
+	void UpdateChannel(std::shared_ptr<XChannel> _channel);
 
-    void AddThread(std::function<void()> _function);
+	void AddThread(std::function<void()> _function);
 };
 
 #endif // XEventLoop_hpp

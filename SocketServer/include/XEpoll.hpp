@@ -15,18 +15,18 @@ class XChannel;
 class XEpoll
 {
 private:
-    int epoll_fd;
-    std::shared_ptr<epoll_event[]> events;
-    std::unordered_map<XChannel *, std::shared_ptr<XChannel>> ptr_channel;
+	int epoll_fd;
+	std::shared_ptr<epoll_event[]> events;
+	std::unordered_map<XChannel *, std::shared_ptr<XChannel>> ptr_channel;
 
 public:
-    XEpoll();
-    ~XEpoll();
+	XEpoll();
+	~XEpoll();
 
-    int AddFd(int _fd, uint32_t _events);
-    std::vector<std::shared_ptr<XChannel>> TriggeredEvents(int _timeout = -1);
+	int AddFd(int _fd, uint32_t _events);
+	std::vector<std::shared_ptr<XChannel>> TriggeredEvents(int _timeout = -1);
 
-    void UpdateChannel(std::shared_ptr<XChannel> _channel);
+	void UpdateChannel(std::shared_ptr<XChannel> _channel);
 };
 
 #endif // XEpoll_hpp

@@ -1,57 +1,58 @@
 #include "XSocket.hpp"
 #include "XUtility.hpp"
 
-XSocket::XSocket() : fd(-1)
+XSocket::XSocket()
+	: fd(-1)
 {
-    fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 }
 
-XSocket::XSocket(int _fd) : fd(_fd)
+XSocket::XSocket(int _fd)
+	: fd(_fd)
 {
 }
 
 XSocket::~XSocket()
 {
-    if (fd != -1)
-    {
-        close(fd);
-    }
+	if(fd != -1)
+	{
+		close(fd);
+	}
 }
-
 
 void XSocket::Bind(std::shared_ptr<XInternetAddress> _address)
 {
-    ErrorIfFile(bind(fd, (sockaddr *)_address->GetSocketAddress().get(), *_address->GetSocketLength()) == -1, "socket bind error");
+	ErrorIfFile(bind(fd, (sockaddr *)_address->GetSocketAddress().get(), *_address->GetSocketLength()) == -1, "socket bind error");
 }
 
 void XSocket::Listen(int _length)
 {
-    ErrorIfFile(listen(fd, _length), "socket listen error");
+	ErrorIfFile(listen(fd, _length), "socket listen error");
 }
 
 void XSocket::SetNonBlocking()
 {
-    fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK);
+	fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK);
 }
 
 std::shared_ptr<XSocket> XSocket::Accept(std::shared_ptr<XInternetAddress> _address)
 {
-    auto client_ = accept(fd, (sockaddr *)_address->GetSocketAddress().get(), _address->GetSocketLength().get());
-    ErrorIfFile(client_ == -1, "socket accept error");
-    return std::make_shared<XSocket>(client_);
+	auto client_ = accept(fd, (sockaddr *)_address->GetSocketAddress().get(), _address->GetSocketLength().get());
+	ErrorIfFile(client_ == -1, "socket accept error");
+	return std::make_shared<XSocket>(client_);
 }
 
 void XSocket::Close()
 {
-    close(fd);
+	close(fd);
 }
 
 int XSocket::GetFd()
 {
-    return fd;
+	return fd;
 }
 
 void XSocket::SetFd(int _fd)
 {
-    fd = _fd;
+	fd = _fd;
 }

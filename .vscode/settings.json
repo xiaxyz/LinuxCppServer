@@ -65,7 +65,8 @@
         "stop_token": "cpp",
         "thread": "cpp",
         "queue": "cpp",
-        "mutex": "cpp"
+        "mutex": "cpp",
+        "future": "cpp"
     },
     "cmake.ignoreCMakeListsMissing": true,
     "C_Cpp.default.compilerPath": "/usr/local/bin/gcc"

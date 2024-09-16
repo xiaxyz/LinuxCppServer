@@ -19,18 +19,18 @@ class XBuffer;
 class XConnection
 {
 private:
-    std::shared_ptr<XEventLoop> event_loop;
-    std::shared_ptr<XSocket> socket;
-    std::shared_ptr<XChannel> channel;
-    std::unique_ptr<XBuffer> read_buffer;
-    std::function<void(std::shared_ptr<XSocket>)> delete_connection_callback;
+	std::shared_ptr<XEventLoop> event_loop;
+	std::shared_ptr<XSocket> socket;
+	std::shared_ptr<XChannel> channel;
+	std::unique_ptr<XBuffer> read_buffer;
+	std::function<void(std::shared_ptr<XSocket>)> delete_connection_callback;
 
 public:
-    XConnection(std::shared_ptr<XEventLoop> _event_loop, std::shared_ptr<XSocket> _socket);
-    ~XConnection();
+	XConnection(std::shared_ptr<XEventLoop> _event_loop, std::shared_ptr<XSocket> _socket);
+	~XConnection();
 
-    void Echo();
-    void SetDeleteConnectionCallback(std::function<void(std::shared_ptr<XSocket>)> _delete_connection_callback);
+	void Echo();
+	void SetDeleteConnectionCallback(std::function<void(std::shared_ptr<XSocket>)> _delete_connection_callback);
 };
 
 #endif // XConnection_hpp
