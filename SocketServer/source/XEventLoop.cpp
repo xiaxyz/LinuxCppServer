@@ -7,7 +7,6 @@ XEventLoop::XEventLoop()
 	: quit(false)
 {
 	epoll = std::make_unique<XEpoll>();
-	thread_pool = std::make_unique<XThreadPool>();
 }
 
 XEventLoop::~XEventLoop()
@@ -29,9 +28,4 @@ void XEventLoop::Loop()
 void XEventLoop::UpdateChannel(std::shared_ptr<XChannel> _channel)
 {
 	epoll->UpdateChannel(_channel);
-}
-
-void XEventLoop::AddThread(std::function<void()> _function)
-{
-	thread_pool->Add(_function);
 }

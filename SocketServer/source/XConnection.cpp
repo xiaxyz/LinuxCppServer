@@ -9,9 +9,10 @@ XConnection::XConnection(std::shared_ptr<XEventLoop> _event_loop, std::shared_pt
 	  socket(_socket)
 {
 	channel = std::make_shared<XChannel>(event_loop, socket);
-	auto callback = std::bind(&XConnection::Echo, this);
-	channel->SetCallback(callback);
-	channel->EnableReading();
+	channel->EnableRead();
+	channel->UseET();
+	auto callback = std::function<void()>(std::bind(&XConnection::Echo, this));
+	channel->SetReadCallback(callback);
 	read_buffer = std::make_unique<XBuffer>();
 }
 

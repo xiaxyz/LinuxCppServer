@@ -10,11 +10,10 @@ XAcceptor::XAcceptor(std::shared_ptr<XEventLoop> _event_loop)
 	internet_address = std::make_shared<XInternetAddress>("127.0.0.1", 6666);
 	socket->Bind(internet_address);
 	socket->Listen();
-	socket->SetNonBlocking();
 	accept_channel = std::make_shared<XChannel>(event_loop, socket);
-	auto callback_ = std::bind(&XAcceptor::AcceptConnection, this);
-	accept_channel->SetCallback(callback_);
-	accept_channel->EnableReading();
+	auto callback_ = std::function<void()>(std::bind(&XAcceptor::AcceptConnection, this));
+	accept_channel->SetReadCallback(callback_);
+	accept_channel->EnableRead();
 }
 
 XAcceptor::~XAcceptor()

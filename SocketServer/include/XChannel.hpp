@@ -18,13 +18,15 @@ private:
 	uint32_t revents;
 	bool in_epoll;
 
-	std::function<void()> callback;
+	std::function<void()> read_callback;
+	std::function<void()> write_callback;
 
 public:
 	XChannel(std::shared_ptr<XEventLoop> _event_loop, std::shared_ptr<XSocket> _socket);
 	~XChannel();
 
-	void EnableReading();
+	void EnableRead();
+	void UseET();
 
 	std::shared_ptr<XSocket> GetXSocket();
 	uint32_t GetEvents();
@@ -32,7 +34,7 @@ public:
 	void SetRevents(uint32_t _revents);
 	bool GetInEpoll();
 	void SetInEpoll(bool _in_epoll);
-	void SetCallback(std::function<void()> _callback);
+	void SetReadCallback(std::function<void()> _callback);
 
 	void HandleEvent();
 };

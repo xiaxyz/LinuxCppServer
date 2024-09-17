@@ -150,7 +150,7 @@ JavaScriptQuotes: Leave # Java引号风格
 JavaScriptWrapImports: true # import/export语句换行
 KeepEmptyLinesAtTheStartOfBlocks: true # 在语法块开始留空行
 KeepEmptyLinesAtEOF: false
-LambdaBodyIndentation: Signature # Lambda表达式主体缩进
+LambdaBodyIndentation: OuterScope # Lambda表达式主体缩进
 LineEnding: DeriveLF
 MacroBlockBegin: '' # 开始块的宏
 MacroBlockEnd: '' # 结束块的宏

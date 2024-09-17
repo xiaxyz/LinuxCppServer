@@ -13,13 +13,16 @@ class XEventLoop;
 class XAcceptor;
 class XSocket;
 class XConnection;
+class XThreadPool;
 
 class XServer
 {
 private:
-	std::shared_ptr<XEventLoop> event_loop;
+	std::shared_ptr<XEventLoop> main_reactor;
 	std::unique_ptr<XAcceptor> acceptor;
-	std::map<int, std::unique_ptr<XConnection>> connections;
+	std::map<int, std::shared_ptr<XConnection>> connections;
+	std::vector<std::shared_ptr<XEventLoop>> sub_reactors;
+	std::unique_ptr<XThreadPool> thread_pool;
 
 public:
 	XServer(std::shared_ptr<XEventLoop> _event_loop);
@@ -27,7 +30,6 @@ public:
 
 	void NewConnection(std::shared_ptr<XSocket> _socket);
 	void DeleteConnection(std::shared_ptr<XSocket> _socket);
-	// void HandleReadEvent(XSocket *_socket);
 };
 
 #endif // XServer_hpp

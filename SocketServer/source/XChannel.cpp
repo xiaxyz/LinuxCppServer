@@ -4,6 +4,8 @@
 XChannel::XChannel(std::shared_ptr<XEventLoop> _event_loop, std::shared_ptr<XSocket> _socket)
 	: event_loop(_event_loop),
 	  socket(_socket),
+	  events(0),
+	  revents(0),
 	  in_epoll(false)
 {
 }
@@ -12,9 +14,15 @@ XChannel::~XChannel()
 {
 }
 
-void XChannel::EnableReading()
+void XChannel::EnableRead()
 {
 	events = EPOLLIN | EPOLLET;
+	event_loop->UpdateChannel(shared_from_this());
+}
+
+void XChannel::UseET()
+{
+	events |= EPOLLET;
 	event_loop->UpdateChannel(shared_from_this());
 }
 
@@ -48,12 +56,19 @@ void XChannel::SetInEpoll(bool _in_epoll)
 	in_epoll = _in_epoll;
 }
 
-void XChannel::SetCallback(std::function<void()> _callback)
+void XChannel::SetReadCallback(std::function<void()> _read_callback)
 {
-	callback = _callback;
+	read_callback = _read_callback;
 }
 
 void XChannel::HandleEvent()
 {
-	event_loop->AddThread(callback);
+	if(revents & (EPOLLIN | EPOLLPRI))
+	{
+		read_callback();
+	}
+	else if(revents & EPOLLOUT)
+	{
+		write_callback();
+	}
 }
