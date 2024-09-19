@@ -74,7 +74,7 @@ BraceWrapping: # 大括号换行风格
   AfterStruct:  true
   AfterUnion: true
   BeforeCatch: true
-  BeforeElse: true
+  BeforeElse: false
   BeforeLambdaBody: true
   BeforeWhile: false
   IndentBraces: false

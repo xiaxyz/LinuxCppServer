@@ -47,6 +47,30 @@ void XSocket::Close()
 	close(fd);
 }
 
+void XSocket::Connect(std::shared_ptr<XInternetAddress> _address)
+{
+	if(fcntl(fd, F_GETFL) & O_NONBLOCK)
+	{
+		while(true)
+		{
+			auto result = connect(fd, (sockaddr *)_address->GetSocketAddress().get(), *_address->GetSocketLength());
+			if(result == 0)
+			{
+				return;
+			} else if(result == -1 && (errno == EINPROGRESS))
+			{
+				continue;
+			} else if (result == -1)
+			{
+				ErrorIfFile(true, "socket connect error");
+			}
+		}
+	} else
+	{
+		ErrorIfFile(connect(fd, (sockaddr *)_address->GetSocketAddress().get(), *_address->GetSocketLength()) == -1, "socket connect error");
+	}
+}
+
 int XSocket::GetFd()
 {
 	return fd;

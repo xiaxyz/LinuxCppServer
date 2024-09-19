@@ -30,6 +30,8 @@ public:
 
 	void Close();
 
+	void Connect(std::shared_ptr<XInternetAddress> _address);
+
 	int GetFd();
 	void SetFd(int _fd);
 };

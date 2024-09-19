@@ -8,7 +8,7 @@
             "name": "(gdb) 启动",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${fileDirname}/${config:xiax.build}/run",
+            "program": "${fileDirname}/${config:xiax.build}/RunServer",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
