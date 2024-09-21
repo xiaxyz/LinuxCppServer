@@ -144,6 +144,18 @@ void XConnection::WriteNonblocking()
 	}
 }
 
+void XConnection::Send(const char *_message)
+{
+	SetSendBuffer(_message);
+	Write();
+}
+
+void XConnection::Business()
+{
+	Read();
+	on_message_callback(shared_from_this());
+}
+
 void XConnection::Close()
 {
 	delete_connection_callback(socket);
@@ -159,13 +171,16 @@ void XConnection::SetDeleteConnectionCallback(const std::function<void(std::shar
 	delete_connection_callback = _delete_connection_callback;
 }
 
-void XConnection::SetOnConnectionCallback(const std::function<void(std::shared_ptr<XConnection>)> &_on_connection_callback)
+void XConnection::SetOnConnectCallback(const std::function<void(std::shared_ptr<XConnection>)> &_on_connection_callback)
 {
 	on_connect_callback = _on_connection_callback;
-	channel->SetReadCallback([this]()
-	{
-		on_connect_callback(shared_from_this());
-	});
+}
+
+void XConnection::SetOnMessageCallback(const std::function<void(std::shared_ptr<XConnection>)> &_on_message_callback)
+{
+	on_message_callback = _on_message_callback;
+	auto business = std::function<void()>(std::bind(&XConnection::Business, this));
+	channel->SetReadCallback(business);
 }
 
 std::shared_ptr<XSocket> XConnection::GetSocket()

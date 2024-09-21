@@ -5,13 +5,13 @@
 #include <memory>
 #include <vector>
 
-class XEpoll;
+class XPoller;
 class XChannel;
 
 class XEventLoop
 {
 private:
-	std::unique_ptr<XEpoll> epoll;
+	std::unique_ptr<XPoller> poller;
 	bool quit;
 
 public:

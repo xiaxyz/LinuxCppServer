@@ -1,12 +1,12 @@
 #include "XEventLoop.hpp"
 #include "XChannel.hpp"
-#include "XEpoll.hpp"
+#include "XPoller.hpp"
 #include "XThreadPool.hpp"
 
 XEventLoop::XEventLoop()
 	: quit(false)
 {
-	epoll = std::make_unique<XEpoll>();
+	poller = std::make_unique<XPoller>();
 }
 
 XEventLoop::~XEventLoop()
@@ -17,7 +17,7 @@ void XEventLoop::Loop()
 {
 	while(!quit)
 	{
-		auto channels = epoll->TriggeredEvents();
+		auto channels = poller->TriggeredEvents();
 		for(const auto &i_channel : channels)
 		{
 			i_channel->HandleEvent();
@@ -27,5 +27,5 @@ void XEventLoop::Loop()
 
 void XEventLoop::UpdateChannel(std::shared_ptr<XChannel> _channel)
 {
-	epoll->UpdateChannel(_channel);
+	poller->UpdateChannel(_channel);
 }

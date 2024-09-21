@@ -5,7 +5,9 @@
             "includePath": [
                 "${workspaceFolder}/**"
             ],
-            "defines": [],
+            "defines": [
+                "OS_LINUX"
+            ],
             "compilerPath": null,
             "cStandard": "${default}",
             "cppStandard": "c++23",

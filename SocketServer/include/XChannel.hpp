@@ -18,7 +18,7 @@ private:
 	std::shared_ptr<XSocket> socket;
 	uint32_t events;
 	uint32_t revents;
-	bool in_epoll;
+	bool in_poller;
 
 	std::function<void()> read_callback;
 	std::function<void()> write_callback;
@@ -34,8 +34,9 @@ public:
 	uint32_t GetEvents();
 	uint32_t GetRevents();
 	void SetRevents(uint32_t _revents);
-	bool GetInEpoll();
-	void SetInEpoll(bool _in_epoll);
+	void AddRevents(uint32_t _revents);
+	bool GetInPoller();
+	void SetInPoller(bool _in_poller);
 	void SetReadCallback(std::function<void()> _callback);
 
 	void HandleEvent();

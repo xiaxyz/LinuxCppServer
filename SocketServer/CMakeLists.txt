@@ -5,6 +5,14 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_C_COMPILER clang)
 set(CMAKE_CXX_COMPILER clang++)
 
+if(CMAKE_HOST_SYSTEM_NAME MATCHES "Linux")
+	message(STATUS "Platform: Linux")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DOS_LINUX")
+elseif(CMAKE_HOST_SYSTEM_NAME MATCHES "Darwin")
+	message(STATUS "Platform: Macos")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DOS_MACOS")
+endif()
+
 project(XSocketServer)
 
 set(CMAKE_BUILD_TYPE "Debug")

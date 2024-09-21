@@ -38,6 +38,7 @@ private:
 	std::shared_ptr<XBuffer> send_buffer;
 	std::function<void(std::shared_ptr<XSocket>)> delete_connection_callback;
 	std::function<void(std::shared_ptr<XConnection>)> on_connect_callback;
+	std::function<void(std::shared_ptr<XConnection>)> on_message_callback;
 
 public:
 	XConnection(const XConnection &) = delete;
@@ -55,12 +56,16 @@ public:
 	void WriteBlocking();
 	void WriteNonblocking();
 
+	void Send(const char *_message);
+	void Business();
+
 	void Close();
 
 	State GetState();
 
 	void SetDeleteConnectionCallback(const std::function<void(std::shared_ptr<XSocket>)> &_delete_connection_callback);
-	void SetOnConnectionCallback(const std::function<void(std::shared_ptr<XConnection>)> &_on_connection_callback);
+	void SetOnConnectCallback(const std::function<void(std::shared_ptr<XConnection>)> &_on_connection_callback);
+	void SetOnMessageCallback(const std::function<void(std::shared_ptr<XConnection>)> &_on_message_callback);
 	std::shared_ptr<XSocket> GetSocket();
 	void SetReadBuffer(const char *_read_buffer);
 	std::shared_ptr<XBuffer> GetReadBuffer();

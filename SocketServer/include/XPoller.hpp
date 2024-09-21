@@ -1,5 +1,5 @@
-#ifndef XEpoll_hpp
-#define XEpoll_hpp
+#ifndef XPoller_hpp
+#define XPoller_hpp
 
 #include <cstring>
 
@@ -7,23 +7,46 @@
 #include <unordered_map>
 #include <vector>
 
+#ifdef OS_LINUX
+
 #include <sys/epoll.h>
 #include <unistd.h>
+
+#endif
+
+#ifdef OS_MACOS
+
+#include <sys/event.h>
+#include <unistd.h>
+
+#endif
 
 class XChannel;
 
 #define MAX_EVENTS 1024
 
-class XEpoll
+class XPoller
 {
 private:
-	int epoll_fd;
+	int poller_fd;
+
+#ifdef OS_LINUX
+
 	std::shared_ptr<epoll_event[]> events;
+
+#endif
+
+#ifdef OS_MACOS
+
+	std::shared_ptr<kevent[]> events;
+
+#endif
+
 	std::unordered_map<XChannel *, std::shared_ptr<XChannel>> ptr_channel;
 
 public:
-	XEpoll();
-	~XEpoll();
+	XPoller();
+	~XPoller();
 
 	int AddFd(int _fd, uint32_t _events);
 	std::vector<std::shared_ptr<XChannel>> TriggeredEvents(int _timeout = -1);
@@ -31,4 +54,4 @@ public:
 	void UpdateChannel(std::shared_ptr<XChannel> _channel);
 };
 
-#endif // XEpoll_hpp
+#endif // XPoller_hpp
