@@ -1,9 +1,11 @@
 #ifndef XInternetAddress_hpp
 #define XInternetAddress_hpp
 
-#include <arpa/inet.h>
 #include <cstring>
+
 #include <memory>
+
+#include <arpa/inet.h>
 
 class XInternetAddress
 {

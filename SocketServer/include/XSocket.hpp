@@ -2,8 +2,9 @@
 #define XSocket_hpp
 
 #include <compare>
-#include <fcntl.h>
 #include <memory>
+
+#include <fcntl.h>
 #include <sys/socket.h>
 #include <unistd.h>
 
@@ -24,7 +25,8 @@ public:
 	void Bind(std::shared_ptr<XInternetAddress> _address);
 	void Listen(int _length = SOMAXCONN);
 
-	void SetNonBlocking();
+	void SetNonblocking();
+	bool IsNonblocking();
 
 	std::shared_ptr<XSocket> Accept(std::shared_ptr<XInternetAddress> _address);
 

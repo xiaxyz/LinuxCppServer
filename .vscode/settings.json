@@ -1,4 +1,6 @@
 {
+    "build.dir" : "build",
+
     "commentTranslate.source": "Bing",
     "files.associations": {
         "iostream": "cpp",

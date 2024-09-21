@@ -2,11 +2,13 @@
 #define XEpoll_hpp
 
 #include <cstring>
+
 #include <memory>
-#include <sys/epoll.h>
-#include <unistd.h>
 #include <unordered_map>
 #include <vector>
+
+#include <sys/epoll.h>
+#include <unistd.h>
 
 class XChannel;
 

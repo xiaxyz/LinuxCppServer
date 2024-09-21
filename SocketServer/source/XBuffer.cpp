@@ -18,12 +18,23 @@ std::size_t XBuffer::Size()
 	return data.size();
 }
 
-const char *XBuffer::Data()
+
+const char *XBuffer::CharData()
 {
 	return data.data();
+}
+
+void XBuffer::SetData(const char *_data)
+{
+	data = _data;
 }
 
 void XBuffer::Clear()
 {
 	data.clear();
+}
+
+std::string &XBuffer::Data()
+{
+	return data;
 }

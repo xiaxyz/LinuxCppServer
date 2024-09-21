@@ -30,9 +30,14 @@ void XSocket::Listen(int _length)
 	ErrorIfFile(listen(fd, _length), "socket listen error");
 }
 
-void XSocket::SetNonBlocking()
+void XSocket::SetNonblocking()
 {
 	fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK);
+}
+
+bool XSocket::IsNonblocking()
+{
+	return (fcntl(fd, F_GETFL) & O_NONBLOCK) != 0;
 }
 
 std::shared_ptr<XSocket> XSocket::Accept(std::shared_ptr<XInternetAddress> _address)

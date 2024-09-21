@@ -10,9 +10,31 @@
                 "mkdir build;",
                 "cd build;",
                 "cmake ..;",
-                "make;",
-                "fi"
+                "make -j$(nproc);",
+                "fi;"
             ],
+            "problemMatcher": []
+        },
+        {
+            "type": "shell",
+            "label": "cmake build server",
+            "command": [
+                "cd ${fileDirname};",
+                "cd build;",
+                "make XRunServer -j$(nproc);"
+            ],
+            "dependsOn": "cmake build",
+            "problemMatcher": []
+        },
+        {
+            "type": "shell",
+            "label": "cmake build client",
+            "command": [
+                "cd ${fileDirname};",
+                "cd build;",
+                "make XRunClient -j$(nproc);"
+            ],
+            "dependsOn": "cmake build",
             "problemMatcher": []
         }
     ],

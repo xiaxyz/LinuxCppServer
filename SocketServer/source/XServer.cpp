@@ -39,6 +39,7 @@ void XServer::NewConnection(std::shared_ptr<XSocket> _socket)
 		auto connection_ = std::make_shared<XConnection>(sub_reactors[mark_], _socket);
 		auto callback_ = std::function<void(std::shared_ptr<XSocket>)>(std::bind(&XServer::DeleteConnection, this, std::placeholders::_1));
 		connection_->SetDeleteConnectionCallback(callback_);
+		connection_->SetOnConnectionCallback(on_connect_callback);
 		connections[_socket->GetFd()] = connection_;
 	}
 }
@@ -46,4 +47,9 @@ void XServer::NewConnection(std::shared_ptr<XSocket> _socket)
 void XServer::DeleteConnection(std::shared_ptr<XSocket> _socket)
 {
 	connections.erase(_socket->GetFd());
+}
+
+void XServer::OnConnect(std::function<void(std::shared_ptr<XConnection>)> _on_connect_callback)
+{
+	on_connect_callback = std::move(_on_connect_callback);
 }

@@ -2,12 +2,15 @@
 #define XServer_hpp
 
 #include <cstring>
+
 #include <format>
+#include <functional>
 #include <iostream>
 #include <map>
 #include <memory>
-#include <unistd.h>
 #include <vector>
+
+#include <unistd.h>
 
 class XEventLoop;
 class XAcceptor;
@@ -23,6 +26,7 @@ private:
 	std::map<int, std::shared_ptr<XConnection>> connections;
 	std::vector<std::shared_ptr<XEventLoop>> sub_reactors;
 	std::unique_ptr<XThreadPool> thread_pool;
+	std::function<void(std::shared_ptr<XConnection>)> on_connect_callback;
 
 public:
 	XServer(std::shared_ptr<XEventLoop> _event_loop);
@@ -30,6 +34,7 @@ public:
 
 	void NewConnection(std::shared_ptr<XSocket> _socket);
 	void DeleteConnection(std::shared_ptr<XSocket> _socket);
+	void OnConnect(std::function<void(std::shared_ptr<XConnection>)> _on_connect_callback);
 };
 
 #endif // XServer_hpp

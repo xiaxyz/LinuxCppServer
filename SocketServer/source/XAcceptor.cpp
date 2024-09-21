@@ -28,7 +28,7 @@ void XAcceptor::AcceptConnection()
 	{
 		std::cout << std::format("new connect IP: {}, port: {}", inet_ntoa(client_address_->GetSocketAddress()->sin_addr), ntohs(client_address_->GetSocketAddress()->sin_port)) << std::endl;
 	}
-	client_socket_->SetNonBlocking();
+	client_socket_->SetNonblocking();
 	new_connection_callback(client_socket_);
 }
 
