@@ -13,7 +13,7 @@ int main(int argc, char const *argv[])
 	auto server_address_ = std::make_shared<XInternetAddress>("127.0.0.1", 6666);
 	client_socket_->Connect(server_address_);
 
-	auto connection_ = std::make_shared<XConnection>(nullptr, client_socket_);
+	auto connection_ = std::make_shared<XConnection>(client_socket_, nullptr);
 
 	while(true)
 	{

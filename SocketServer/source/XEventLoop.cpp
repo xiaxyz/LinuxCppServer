@@ -1,12 +1,13 @@
 #include "XEventLoop.hpp"
+
 #include "XChannel.hpp"
 #include "XPoller.hpp"
 #include "XThreadPool.hpp"
 
 XEventLoop::XEventLoop()
-	: quit(false)
+	: quit(false),
+	  poller(std::make_unique<XPoller>())
 {
-	poller = std::make_unique<XPoller>();
 }
 
 XEventLoop::~XEventLoop()

@@ -1,8 +1,8 @@
 #include "XInternetAddress.hpp"
 
 XInternetAddress::XInternetAddress()
+	: socket_address(std::make_shared<sockaddr_in>())
 {
-	socket_address = std::make_shared<sockaddr_in>();
 	socket_length = std::make_shared<socklen_t>(sizeof(*socket_address));
 	memset(socket_address.get(), 0, sizeof(*socket_address));
 }

@@ -1,4 +1,5 @@
 #include "XSocket.hpp"
+
 #include "XUtility.hpp"
 
 XSocket::XSocket()

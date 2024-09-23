@@ -1,12 +1,17 @@
 #include "XChannel.hpp"
+
 #include "XEventLoop.hpp"
 
-XChannel::XChannel(std::shared_ptr<XEventLoop> _event_loop, std::shared_ptr<XSocket> _socket)
-	: event_loop(_event_loop),
-	  socket(_socket),
-	  events(0),
-	  revents(0),
-	  in_poller(false)
+const short XChannel::READ_EVENT = 0b1;
+const short XChannel::WRITE_EVENT = 0b10;
+const short XChannel::ET = 0b100;
+
+XChannel::XChannel(std::shared_ptr<XSocket> _socket, std::shared_ptr<XEventLoop> _event_loop)
+	: socket(_socket),
+	  event_loop(_event_loop),
+	  listen_events(0),
+	  ready_events(0)
+
 {
 }
 
@@ -14,65 +19,72 @@ XChannel::~XChannel()
 {
 }
 
+void XChannel::HandleEvent() const
+{
+	if(ready_events & READ_EVENT)
+	{
+		read_callback();
+	}
+	if(ready_events & WRITE_EVENT)
+	{
+		write_callback();
+	}
+}
+
 void XChannel::EnableRead()
 {
-	events = EPOLLIN | EPOLLET;
+	listen_events |= READ_EVENT;
 	event_loop->UpdateChannel(shared_from_this());
 }
 
-void XChannel::UseET()
+void XChannel::EnableWrite()
 {
-	events |= EPOLLET;
+	listen_events |= WRITE_EVENT;
 	event_loop->UpdateChannel(shared_from_this());
 }
 
-std::shared_ptr<XSocket> XChannel::GetXSocket()
+void XChannel::EnableET()
+{
+	listen_events |= ET;
+	event_loop->UpdateChannel(shared_from_this());
+}
+
+std::shared_ptr<XSocket> XChannel::GetSocket() const
 {
 	return socket;
 }
 
-uint32_t XChannel::GetEvents()
+short XChannel::GetListenEvents() const
 {
-	return events;
+	return listen_events;
 }
 
-uint32_t XChannel::GetRevents()
+short XChannel::GetReadyEvents() const
 {
-	return revents;
+	return ready_events;
 }
 
-void XChannel::SetRevents(uint32_t _revents)
+bool XChannel::GetExist() const
 {
-	revents = _revents;
+	return exist;
 }
 
-void XChannel::AddRevents(uint32_t _revents)
+void XChannel::SetReadyEvents(short _ready_events)
 {
-	revents |= _revents;
+	ready_events = _ready_events;
 }
 
-bool XChannel::GetInPoller()
-{
-	return in_poller;
-}
-
-void XChannel::SetInPoller(bool _in_poller)
-{
-	in_poller = _in_poller;
-}
-
-void XChannel::SetReadCallback(std::function<void()> _read_callback)
+void XChannel::SetReadCallback(const std::function<void()> &_read_callback)
 {
 	read_callback = _read_callback;
 }
 
-void XChannel::HandleEvent()
+void XChannel::SetWriteCallback(const std::function<void()> &_write_callback)
 {
-	if(revents & (EPOLLIN | EPOLLPRI))
-	{
-		read_callback();
-	} else if(revents & EPOLLOUT)
-	{
-		write_callback();
-	}
+	write_callback = _write_callback;
+}
+
+void XChannel::SetExist(bool _exist)
+{
+	exist = _exist;
 }

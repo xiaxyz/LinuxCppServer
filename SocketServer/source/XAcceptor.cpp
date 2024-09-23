@@ -1,16 +1,17 @@
 #include "XAcceptor.hpp"
+
 #include "XChannel.hpp"
 #include "XInternetAddress.hpp"
 #include "XSocket.hpp"
 
 XAcceptor::XAcceptor(std::shared_ptr<XEventLoop> _event_loop)
-	: event_loop(_event_loop)
+	: event_loop(_event_loop),
+	  socket(std::make_shared<XSocket>()),
+	  internet_address(std::make_shared<XInternetAddress>("127.0.0.1", 6666))
 {
-	socket = std::make_shared<XSocket>();
-	internet_address = std::make_shared<XInternetAddress>("127.0.0.1", 6666);
 	socket->Bind(internet_address);
 	socket->Listen();
-	accept_channel = std::make_shared<XChannel>(event_loop, socket);
+	accept_channel = std::make_shared<XChannel>(socket, event_loop);
 	auto callback_ = std::function<void()>(std::bind(&XAcceptor::AcceptConnection, this));
 	accept_channel->SetReadCallback(callback_);
 	accept_channel->EnableRead();

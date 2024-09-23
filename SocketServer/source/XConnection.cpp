@@ -1,19 +1,21 @@
 #include "XConnection.hpp"
+
 #include "XBuffer.hpp"
 #include "XChannel.hpp"
 #include "XSocket.hpp"
+
 #include "XUtility.hpp"
 
-XConnection::XConnection(std::shared_ptr<XEventLoop> _event_loop, std::shared_ptr<XSocket> _socket)
-	: event_loop(_event_loop),
-	  socket(_socket),
+XConnection::XConnection(std::shared_ptr<XSocket> _socket, std::shared_ptr<XEventLoop> _event_loop)
+	: socket(_socket),
+	  event_loop(_event_loop),
 	  state(State::Connected)
 {
 	if(_event_loop != nullptr)
 	{
-		channel = std::make_shared<XChannel>(event_loop, socket);
+		channel = std::make_shared<XChannel>(socket, event_loop);
 		channel->EnableRead();
-		channel->UseET();
+		channel->EnableET();
 	}
 	read_buffer = std::make_shared<XBuffer>();
 	send_buffer = std::make_shared<XBuffer>();
@@ -38,7 +40,7 @@ void XConnection::Read()
 
 void XConnection::ReadBlocking()
 {
-	auto receive_size_ = uint(0);
+	auto receive_size_ = (unsigned int)(0);
 	auto socket_len_ = socklen_t(sizeof(receive_size_));
 	getsockopt(socket->GetFd(), SOL_SOCKET, SO_RCVBUF, &receive_size_, &socket_len_);
 	char buffer_[receive_size_];
@@ -77,7 +79,7 @@ void XConnection::ReadNonblocking()
 		} else if(bytes_read_ == 0)
 		{
 			std::cout << std::format("EOF, client fd {} disconnected", socket->GetFd()) << std::endl;
-			delete_connection_callback(socket);
+			delete_connection(socket);
 			break;
 		} else
 		{
@@ -153,12 +155,12 @@ void XConnection::Send(const char *_message)
 void XConnection::Business()
 {
 	Read();
-	on_message_callback(shared_from_this());
+	on_receive(shared_from_this());
 }
 
 void XConnection::Close()
 {
-	delete_connection_callback(socket);
+	delete_connection(socket);
 }
 
 XConnection::State XConnection::GetState()
@@ -166,19 +168,14 @@ XConnection::State XConnection::GetState()
 	return state;
 }
 
-void XConnection::SetDeleteConnectionCallback(const std::function<void(std::shared_ptr<XSocket>)> &_delete_connection_callback)
+void XConnection::SetDeleteConnection(const std::function<void(std::shared_ptr<XSocket>)> &_delete_connection)
 {
-	delete_connection_callback = _delete_connection_callback;
+	delete_connection = _delete_connection;
 }
 
-void XConnection::SetOnConnectCallback(const std::function<void(std::shared_ptr<XConnection>)> &_on_connection_callback)
+void XConnection::SetOnReceive(const std::function<void(std::shared_ptr<XConnection>)> &_on_receive)
 {
-	on_connect_callback = _on_connection_callback;
-}
-
-void XConnection::SetOnMessageCallback(const std::function<void(std::shared_ptr<XConnection>)> &_on_message_callback)
-{
-	on_message_callback = _on_message_callback;
+	on_receive = _on_receive;
 	auto business = std::function<void()>(std::bind(&XConnection::Business, this));
 	channel->SetReadCallback(business);
 }

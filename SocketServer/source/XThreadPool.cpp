@@ -1,4 +1,5 @@
 #include "XThreadPool.hpp"
+
 #include "XEventLoop.hpp"
 
 XThreadPool::XThreadPool(int _size)
@@ -64,3 +65,4 @@ std::future<typename std::invoke_result<Function, Args...>::type> XThreadPool::A
 	return result_;
 }
 template std::future<void> XThreadPool::Add<std::function<void()> &>(std::function<void()> &);
+template std::future<void> XThreadPool::Add<std::function<void()>>(std::function<void()> &&);
