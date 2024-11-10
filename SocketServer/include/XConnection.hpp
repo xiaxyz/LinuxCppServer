@@ -22,7 +22,7 @@ class XBuffer;
 class XConnection : public std::enable_shared_from_this<XConnection>
 {
 public:
-	enum State : uint
+	enum State : unsigned int
 	{
 		Invalid = 1,
 		Connected,

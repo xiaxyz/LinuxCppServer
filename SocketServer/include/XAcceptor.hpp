@@ -21,7 +21,7 @@ private:
 	std::function<void(std::shared_ptr<XSocket>)> new_connection_callback;
 
 public:
-	XAcceptor(std::shared_ptr<XEventLoop> _event_loop);
+	XAcceptor(std::shared_ptr<XEventLoop> _event_loop, std::shared_ptr<XInternetAddress> _internet_address);
 	~XAcceptor();
 
 	void AcceptConnection();

@@ -11,6 +11,7 @@ class XAcceptor;
 class XConnection;
 class XThreadPool;
 class XSocket;
+class XInternetAddress;
 
 enum Result : unsigned int;
 
@@ -30,7 +31,7 @@ public:
 	XTCPServer &operator=(const XTCPServer &_other) = delete;
 	XTCPServer(const XTCPServer &&_other) = delete;
 	XTCPServer &operator=(const XTCPServer &&_other) = delete;
-	XTCPServer();
+	XTCPServer(std::shared_ptr<XInternetAddress> _internet_address);
 	~XTCPServer();
 
 	void Start();

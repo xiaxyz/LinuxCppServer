@@ -4,11 +4,14 @@
 #include "XInternetAddress.hpp"
 #include "XSocket.hpp"
 
-XAcceptor::XAcceptor(std::shared_ptr<XEventLoop> _event_loop)
+#include "XUtility.hpp"
+
+XAcceptor::XAcceptor(std::shared_ptr<XEventLoop> _event_loop, std::shared_ptr<XInternetAddress> _internet_address)
 	: event_loop(_event_loop),
-	  socket(std::make_shared<XSocket>()),
-	  internet_address(std::make_shared<XInternetAddress>("127.0.0.1", 6666))
+	  socket(std::make_shared<XSocket>())
 {
+	ErrorIfFile(_internet_address == nullptr, "internet address is null");
+	internet_address = _internet_address;
 	socket->Bind(internet_address);
 	socket->Listen();
 	accept_channel = std::make_shared<XChannel>(socket, event_loop);

@@ -4,7 +4,7 @@
 #include <iostream>
 
 
-enum Result : uint
+enum Result : unsigned int
 {
 	undefined = 1,
 	success,

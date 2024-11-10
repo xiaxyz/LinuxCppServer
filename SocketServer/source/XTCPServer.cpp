@@ -8,10 +8,10 @@
 
 #include "XUtility.hpp"
 
-XTCPServer::XTCPServer()
+XTCPServer::XTCPServer(std::shared_ptr<XInternetAddress> _internet_address)
 	: main_reactor(std::make_shared<XEventLoop>())
 {
-	acceptor = std::make_unique<XAcceptor>(main_reactor);
+	acceptor = std::make_unique<XAcceptor>(main_reactor, _internet_address);
 	auto callback = std::function<void(std::shared_ptr<XSocket>)>(std::bind(&XTCPServer::NewConnection, this, std::placeholders::_1));
 	acceptor->SetNewConnectionCallback(callback);
 
